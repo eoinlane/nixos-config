@@ -1,1 +1,1 @@
-# nixos-config
+# nixos-config for Olan's Nix machine
