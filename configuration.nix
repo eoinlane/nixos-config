@@ -1,21 +1,15 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 {
-  inputs,
-  system,
-  lib,
   config,
   pkgs,
-  nixvim,
+  lib,
   ...
 }:
 
 {
   imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    #input.home-manager.nixosModules.default
+    ./hardware-configuration.nix # Include hardware scan results.
+    ./hosts
+    # input.home-manager.nixosModules.default
   ];
 
   nix.settings.experimental-features = [
@@ -23,106 +17,86 @@
     "flakes"
   ];
 
-  # Use the systemd-boot EFI boot loader.
+  # Bootloader configuration
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  networking.hostName = "nixos-olan"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-  # Set your time zone.
+  # Hostname configuration
+  networking.hostName = "nixos-olan";
+
+  # Networking setup
+  networking.networkmanager.enable = true; # Easiest and default for most distros.
+
+  # Time zone configuration
   time.timeZone = "Europe/Dublin";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
+  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Hardware configuration
   hardware.opengl = {
     enable = true;
+    driSupport32Bit = true;
   };
-
+  # NVIDIA driver configuration
   services.xserver.videoDrivers = [ "nvidia" ];
-
   hardware.nvidia = {
-
     modesetting.enable = true;
     open = false;
-
     nvidiaSettings = true;
-
     package = config.boot.kernelPackages.nvidiaPackages.production;
-
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.gnome.core-utilities.enable = false;
-  services.xserver.displayManager.gdm.autoSuspend = false;
-  #Configure keymap in X11
-  services.xserver.xkb.layout = "us";
-  services.xserver.xkb.options = "eurosign:e,caps:escape";
+  # X11 and GNOME configuration
+  services.xserver = {
+    enable = true;
+    desktopManager.gnome.enable = true;
+    displayManager.gdm = {
+      enable = true;
+      autoSuspend = false;
+    };
+    xkb.layout = "us";
+    xkb.options = "eurosign:e,caps:escape";
+  };
 
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
+  # Sound configuration
   hardware.pulseaudio.enable = false;
-  # OR
   services.pipewire = {
     enable = true;
     pulse.enable = true;
   };
-  # add /.local to $PATH
+
+  # Environment variables and paths
   environment.variables = {
     NIXOS_OZONE_WL = "1";
     PATH = [
-      "\${HOME}/.local/bin"
-      "\${HOME}/.config/rofi/scripts"
+      "/home/olan/.local/bin"
+      "/home/olan/.config/rofi/scripts"
     ];
     NIXPKGS_ALLOW_UNFREE = "1";
-    #PKG_CONFIG_PATH = lib.makeLibraryPath [ libevdev ];
   };
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # User configuration
   users.users.olan = {
     isNormalUser = true;
     home = "/home/olan";
     extraGroups = [
       "wheel"
       "networkmanager"
-    ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      tree
-    ];
+    ]; # Enable sudo for the user.
+    packages = with pkgs; [ tree ];
   };
 
-  nix.settings.allowed-users = [
-    "*"
-  ];
+  nix.settings.allowed-users = [ "*" ];
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  # System packages
   environment.systemPackages = with pkgs; [
     firefox
     git
     tmux
     eza
     htop
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    vim # Text editor for configuration edits
     wget
     alacritty
     sl
@@ -131,59 +105,22 @@
     xclip
     gnomeExtensions.dash-to-dock
     gnomeExtensions.gsconnect
-    pkgs.nixfmt-rfc-style
+    nixfmt-rfc-style
     libevdev
   ];
 
-  #Garbage colector
+  # Garbage collection
   nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 7d";
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
+  # Enable OpenSSH
   services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  # System state version
+  system.stateVersion = "24.05"; # Initial NixOS version installed.
 
-  # Copy the NixOS configuration file and link it from the resulting system
-  # (/run/current-system/configuration.nix). This is useful in case you
-  # accidentally delete configuration.nix.
-  #system.copySystemConfiguration = true;
-
-  # This option defines the first version of NixOS you have installed on this particular machine,
-  # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
-  #
-  # Most users should NEVER change this value after the initial install, for any reason,
-  # even if you've upgraded your system to a new NixOS release.
-  #
-  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
-  # so changing it will NOT upgrade your system - see https://nixos.org/manual/nixos/stable/#sec-upgrading for how
-  # to actually do that.
-  #
-  # This value being lower than the current NixOS release does NOT mean your system is
-  # out of date, out of support, or vulnerable.
-  #
-  # Do NOT change this value unless you have manually inspected all the changes it would make to your configuration,
-  # and migrated your data accordingly.
-  #
-  # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.05"; # Did you read the comment?
-
-  users.users.root.initialHashedPassword = "";
+  users.users.root.initialHashedPassword = ""; # Set root password.
 }
