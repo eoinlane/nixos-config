@@ -4,15 +4,26 @@
   lib,
   config,
   pkgs,
+  hyprland,
   nixvim,
   ...
 }:
 
 {
 
+  imports = [
+    hyprland.homeManagerModules.default
+    #./environment
+    #./programs
+    #./scripts
+    #./themes
+  ];
+
   # Define the username and home directory path
-  home.username = "olan";
-  home.homeDirectory = "/home/olan";
+  home = {
+    username = "olan";
+    homeDirectory = "/home/olan";
+  };
 
   # Install packages to the user's profile
   home.packages = with pkgs; [

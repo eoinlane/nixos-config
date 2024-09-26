@@ -14,37 +14,43 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim.url = "github:eoinlane/nixvim";
+    hyprland.url = "github:hyprwm/Hyprland";
   };
-
   outputs =
     inputs@{
       self,
       nixpkgs,
       home-manager,
+      nixvim,
+      hyprland,
       ...
     }:
+
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      lib = nixpkgs.lib;
+
+    in
     {
       nixosConfigurations = {
-        nixos-olan = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+        nixos-olan = lib.nixosSystem rec {
+          inherit system;
+          specialArgs = {
+            inherit hyprland nixvim inputs;
+          };
           modules = [
             ./configuration.nix
-
-            # make home-manager as a module of nixos
-            # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
+            hyprland.nixosModules.default
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-
-              # TODO replace ryan with your own username
-              home-manager.users.olan = import ./home.nix;
-
-              # Pass additional arguments to home.nix (e.g., inputs)
-              home-manager.extraSpecialArgs = {
-                inherit inputs;
-              };
-              # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
+              home-manager.users.olan = import ./home/home.nix;
+              home-manager.extraSpecialArgs = specialArgs;
             }
           ];
         };
