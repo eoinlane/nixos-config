@@ -14,7 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim.url = "github:eoinlane/nixvim";
-    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland.url = "git+https://github.com/hyprwm/hyprland?submodules=1";
   };
   outputs =
     inputs@{

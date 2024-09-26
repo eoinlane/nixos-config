@@ -142,7 +142,7 @@
   programs.zsh.oh-my-zsh = {
     enable = true;
     plugins = [ ];
-    theme = "agnoster";
+    #theme = "agnoster";
   };
 
   # alacritty - a cross-platform, GPU-accelerated terminal emulator
