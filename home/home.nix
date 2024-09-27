@@ -31,6 +31,7 @@
     cava
     rofi
     kitty
+    hyprpaper
     # CLI tools
     neofetch # System information tool
     nnn # Terminal file manager
@@ -93,7 +94,6 @@
     ethtool # Network interface configuration
     pciutils # Tools for PCI devices (e.g., `lspci`)
     usbutils # Tools for USB devices (e.g., `lsusb`)
-
     # Fonts
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) # JetBrains Mono font with NerdFont icons
 

@@ -31,7 +31,6 @@
   time.timeZone = "Europe/Dublin";
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   # Hardware configuration
   hardware.opengl = {
@@ -39,7 +38,6 @@
     driSupport32Bit = true;
   };
   # NVIDIA driver configuration
-  services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     modesetting.enable = true;
     open = false;
@@ -50,6 +48,7 @@
   # X11 and GNOME configuration
   services.xserver = {
     enable = true;
+    videoDrivers = [ "nvidia" ];
     desktopManager.gnome.enable = true;
     displayManager.gdm = {
       enable = true;
@@ -86,6 +85,8 @@
     ]; # Enable sudo for the user.
     packages = with pkgs; [ tree ];
   };
+
+  nixpkgs.config.allowUnfree = true;
 
   nix.settings.allowed-users = [ "*" ];
 
