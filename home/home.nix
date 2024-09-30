@@ -15,7 +15,7 @@
     hyprland.homeManagerModules.default
     #./environment
     ./programs
-    #./scripts
+    ./scripts
     ./themes
   ];
 
@@ -26,80 +26,87 @@
   };
 
   # Install packages to the user's profile
-  home.packages = with pkgs; [
-    dunst
-    cava
-    rofi
-    kitty
-    hyprpaper
-    # CLI tools
-    neofetch # System information tool
-    nnn # Terminal file manager
-    ripgrep # Recursively searches directories for a regex pattern
-    jq # Command-line JSON processor
-    yq-go # Command-line YAML processor
-    eza # Modern replacement for 'ls'
-    fzf # Fuzzy finder
+  home.packages =
+    (with pkgs; [
+      dunst
+      cava
+      rofi
+      kitty
+      hyprpaper
+      # CLI tools
+      neofetch # System information tool
+      nnn # Terminal file manager
+      ripgrep # Recursively searches directories for a regex pattern
+      gedit
+      jq # Command-line JSON processor
+      yq-go # Command-line YAML processor
+      eza # Modern replacement for 'ls'
+      fzf # Fuzzy finder
 
-    # Archive tools
-    zip # Zip utility
-    xz # Compression tool
-    unzip # Unzip utility
-    p7zip # 7z archive manager
+      # Archive tools
+      zip # Zip utility
+      xz # Compression tool
+      unzip # Unzip utility
+      p7zip # 7z archive manager
 
-    # Networking tools
-    mtr # Network diagnostic tool
-    iperf3 # Network bandwidth testing
-    dnsutils # Provides 'dig' and 'nslookup'
-    ldns # 'drill', an alternative to 'dig'
-    aria2 # Lightweight multi-protocol download utility
-    socat # Replacement for 'netcat'
-    nmap # Network discovery and security auditing tool
-    ipcalc # IP address calculator
+      # Networking tools
+      mtr # Network diagnostic tool
+      iperf3 # Network bandwidth testing
+      dnsutils # Provides 'dig' and 'nslookup'
+      ldns # 'drill', an alternative to 'dig'
+      aria2 # Lightweight multi-protocol download utility
+      socat # Replacement for 'netcat'
+      nmap # Network discovery and security auditing tool
+      ipcalc # IP address calculator
 
-    # System utilities
-    cowsay # Fun ASCII art generator
-    file # Determines file type
-    which # Locates a command
-    tree # Displays directory trees
-    gnused # GNU 'sed' stream edito:wr
-    gnutar # GNU 'tar' archiving utility
-    gawk # Pattern scanning and processing language
-    zstd # Compression tool
-    gnupg # GNU Privacy Guard for encryption
-    pcmanfm # Lightweight file manager
-    nautilus # GNOME file manager
-    dropbox # Dropbox client for file syncing
+      # System utilities
+      cowsay # Fun ASCII art generator
+      file # Determines file type
+      which # Locates a command
+      tree # Displays directory trees
+      gnused # GNU 'sed' stream edito:wr
+      gnutar # GNU 'tar' archiving utility
+      gawk # Pattern scanning and processing language
+      zstd # Compression tool
+      gnupg # GNU Privacy Guard for encryption
+      pcmanfm # Lightweight file manager
+      dropbox # Dropbox client for file syncing
 
-    # Nix-related tools
-    nix-output-monitor # Enhanced Nix command output with more details
+      # Nix-related tools
+      nix-output-monitor # Enhanced Nix command output with more details
 
-    # Productivity tools
-    hugo # Static site generator
-    glow # Markdown viewer in terminal
+      # Productivity tools
+      hugo # Static site generator
+      glow # Markdown viewer in terminal
 
-    # Monitoring tools
-    btop # Resource monitor, replacement for 'htop'
-    iotop # Monitor disk I/O usage
-    iftop # Network traffic monitoring
+      # Monitoring tools
+      btop # Resource monitor, replacement for 'htop'
+      iotop # Monitor disk I/O usage
+      iftop # Network traffic monitoring
 
-    # Debugging tools
-    strace # Trace system calls
-    ltrace # Trace library calls
-    lsof # List open files
+      # Debugging tools
+      strace # Trace system calls
+      ltrace # Trace library calls
+      lsof # List open files
 
-    # System tools
-    sysstat # Performance monitoring
-    lm_sensors # Hardware monitoring (for temperature, etc.)
-    ethtool # Network interface configuration
-    pciutils # Tools for PCI devices (e.g., `lspci`)
-    usbutils # Tools for USB devices (e.g., `lsusb`)
-    # Fonts
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) # JetBrains Mono font with NerdFont icons
+      # System tools
+      sysstat # Performance monitoring
+      lm_sensors # Hardware monitoring (for temperature, etc.)
+      ethtool # Network interface configuration
+      pciutils # Tools for PCI devices (e.g., `lspci`)
+      usbutils # Tools for USB devices (e.g., `lsusb`)
+      # Fonts
+      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) # JetBrains Mono font with NerdFont icons
 
-    # Add nixvim as a package for Neovim management
-    inputs.nixvim.packages.${pkgs.system}.default
-  ];
+      # Add nixvim as a package for Neovim management
+      inputs.nixvim.packages.${pkgs.system}.default
+    ])
+    ++ (with pkgs.gnome; [
+      nautilus
+      zenity
+      gnome-tweaks
+      eog
+    ]);
 
   # Enable fontconfig for managing fonts
   fonts.fontconfig.enable = true;

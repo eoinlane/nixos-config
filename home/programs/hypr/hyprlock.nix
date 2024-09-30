@@ -1,6 +1,5 @@
-{config, ...}: let
-  inherit (config.lib.stylix.colors) base00 base01 base05 base07;
-in {
+{config, ...}: 
+{
   programs.hyprlock = {
     enable = true;
 
@@ -14,7 +13,6 @@ in {
         brightness = 0.8;
         contrast = 0.8;
 
-        color = "${base00}99";
       };
 
       input-field = {
@@ -27,9 +25,6 @@ in {
         dots_size = 0.33;
         dots_spacing = 0.15;
         dots_center = false;
-        outer_color = "${base01}";
-        inner_color = "${base07}";
-        font_color = "${base00}";
         fade_on_empty = true;
         placeholder_text = "<i>Input Password...</i>";
         hide_input = false;
@@ -43,7 +38,6 @@ in {
 
       label = {
         text = "$TIME";
-        color = "${base05}";
         font_size = 50;
         font_family = "Noto Sans";
         position = {

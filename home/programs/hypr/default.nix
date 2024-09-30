@@ -64,9 +64,10 @@
       # Autostart necessary processes (like notifications daemons, status bars, etc.)
       # Or execute your favorite apps at launch like this:
       exec-once = dunst
-      exec-once = $terminal
       # exec-once = nm-applet &
-      exec-once = waybar & hyprpaper & firefox
+      exec = pkill waybar & sleep 0.5 && waybar
+      exec-once = swww init & sleep 0.5 && exec wallpaper_random
+      exec-once = $terminal & firefox
 
 
       #############################

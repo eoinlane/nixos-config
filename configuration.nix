@@ -99,7 +99,7 @@
     htop
     vim # Text editor for configuration edits
     wget
-    alacritty
+    pulseaudio
     sl
     bat
     vscode
