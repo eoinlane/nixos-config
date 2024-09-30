@@ -10,6 +10,8 @@ shell zsh
 # Remove close window confirm
 confirm_os_window_close 0
 
+env export NIX_REMOTE=daemon
+
 # Font config
 font_family      jetbrains mono nerd font
 bold_font        jetbrains mono nerd font
