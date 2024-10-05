@@ -33,9 +33,9 @@
   # Allow unfree packages
 
   # Hardware configuration
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
   # NVIDIA driver configuration
   hardware.nvidia = {
@@ -108,6 +108,8 @@
     gnomeExtensions.gsconnect
     nixfmt-rfc-style
     libevdev
+    go
+    gnumake
   ];
 
   # Garbage collection

@@ -33,6 +33,7 @@
       rofi
       kitty
       hyprpaper
+      networkmanagerapplet
       # CLI tools
       neofetch # System information tool
       nnn # Terminal file manager
