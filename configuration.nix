@@ -30,6 +30,14 @@
   # Time zone configuration
   time.timeZone = "Europe/Dublin";
 
+  services.tailscale.enable = true;
+
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+    package = pkgs.docker_25;
+  };
+
   # Allow unfree packages
 
   # Hardware configuration
@@ -40,11 +48,12 @@
   # NVIDIA driver configuration
   hardware.nvidia = {
     modesetting.enable = true;
-    open = false;
+    open = true;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.production;
+    #package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 
+  hardware.nvidia-container-toolkit.enable = true;
   # X11 and GNOME configuration
   services.xserver = {
     enable = true;
@@ -82,6 +91,7 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "docker"
     ]; # Enable sudo for the user.
     packages = with pkgs; [ tree ];
   };
@@ -110,6 +120,9 @@
     libevdev
     go
     gnumake
+    nvidia-container-toolkit
+    podman
+    vlc
   ];
 
   # Garbage collection
@@ -118,10 +131,15 @@
     dates = "weekly";
     options = "--delete-older-than 7d";
   };
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
 
   # Enable OpenSSH
   services.openssh.enable = true;
-
+  services.openssh.settings.X11Forwarding = true;
   # System state version
   system.stateVersion = "24.05"; # Initial NixOS version installed.
 

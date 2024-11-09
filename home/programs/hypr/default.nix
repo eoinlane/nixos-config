@@ -17,6 +17,7 @@
     hypridle
     hyprlock
     swww
+    nwg-dock-hyprland
   ];
 
   #test later systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
@@ -65,7 +66,7 @@
       # Or execute your favorite apps at launch like this:
       exec-once = dunst
       # exec-once = nm-applet &
-      exec = pkill waybar & sleep 0.5 && waybar
+      exec = pkill waybar & sleep 0.5 && waybar && nwg-dock-hyprland
       exec-once = swww init & sleep 0.5 && exec wallpaper_random
       exec-once = $terminal & firefox
 

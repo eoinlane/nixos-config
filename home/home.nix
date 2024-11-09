@@ -72,7 +72,8 @@
       gnupg # GNU Privacy Guard for encryption
       pcmanfm # Lightweight file manager
       dropbox # Dropbox client for file syncing
-
+      gimp
+      wofi
       # Nix-related tools
       nix-output-monitor # Enhanced Nix command output with more details
 
@@ -102,7 +103,7 @@
       # Add nixvim as a package for Neovim management
       inputs.nixvim.packages.${pkgs.system}.default
     ])
-    ++ (with pkgs.gnome; [
+    ++ (with pkgs; [
       nautilus
       zenity
       gnome-tweaks
