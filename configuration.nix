@@ -73,6 +73,12 @@
     enable = true;
     pulse.enable = true;
   };
+  services = {
+    printing = {
+      enable = true;
+      drivers = with pkgs; [ hplipWithPlugin ];
+    };
+  };
 
   # Environment variables and paths
   environment.variables = {
@@ -102,6 +108,7 @@
 
   # System packages
   environment.systemPackages = with pkgs; [
+    ntfs3g
     firefox
     git
     tmux
@@ -137,6 +144,19 @@
     openFirewall = true;
   };
 
+  fileSystems."/mnt/media" = {
+    device = "//raspberrypi/MyMedia";
+    fsType = "cifs";
+    options = [
+      "username=eoin"
+      "password=el"
+      "rw"
+      "uid=1000"
+      "gid=100"
+      "x-systemd.automount"
+      "noauto"
+    ];
+  };
   # Enable OpenSSH
   services.openssh.enable = true;
   services.openssh.settings.X11Forwarding = true;
