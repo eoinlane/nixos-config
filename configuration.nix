@@ -11,6 +11,7 @@
     ./hosts
     # input.home-manager.nixosModules.default
   ];
+  #nixpkgs.overlays = [ (import /etc/nixos/overlays/cava.nix) ];
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -30,6 +31,10 @@
   # Time zone configuration
   time.timeZone = "Europe/Dublin";
 
+  #  services.xrdp.defaultWindowManager = "gnome-remote-desktop";
+
+  programs.nix-ld.enable = true;
+
   services.tailscale.enable = true;
 
   virtualisation.docker.rootless = {
@@ -37,6 +42,8 @@
     setSocketVariable = true;
     package = pkgs.docker_25;
   };
+
+  virtualisation.podman.enable = true;
 
   # Allow unfree packages
 
@@ -108,6 +115,7 @@
 
   # System packages
   environment.systemPackages = with pkgs; [
+    docker-compose
     ntfs3g
     firefox
     git
@@ -130,8 +138,17 @@
     nvidia-container-toolkit
     podman
     vlc
+    gnome-remote-desktop
   ];
 
+  # https://nixos.wiki/wiki/Remote_Desktop
+  services.xrdp = {
+    enable = true;
+    openFirewall = true;
+
+    defaultWindowManager = "gnome-session";
+  };
+  ##services.gnome-remote-desktop.enable = true; # (would not want to work without this)
   # Garbage collection
   nix.gc = {
     automatic = true;

@@ -5,7 +5,7 @@
   config,
   pkgs,
   hyprland,
-  nixvim,
+  #nixvim,
   ...
 }:
 
@@ -29,7 +29,7 @@
   home.packages =
     (with pkgs; [
       dunst
-      cava
+      #cava
       rofi
       kitty
       hyprpaper
@@ -98,10 +98,9 @@
       pciutils # Tools for PCI devices (e.g., `lspci`)
       usbutils # Tools for USB devices (e.g., `lsusb`)
       # Fonts
-      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) # JetBrains Mono font with NerdFont icons
-
       # Add nixvim as a package for Neovim management
       inputs.nixvim.packages.${pkgs.system}.default
+      inputs.ghostty.packages.${pkgs.system}.default
     ])
     ++ (with pkgs; [
       nautilus

@@ -14,15 +14,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim.url = "github:eoinlane/nixvim";
-    hyprland.url = "git+https://github.com/hyprwm/hyprland?submodules=1";
+    hyprland.url = "github:hyprwm/Hyprland";
+    #hyprland.url = "git+https://github.com/hyprwm/hyprland?submodules=1";
+    vscode-server.url = "github:nix-community/nixos-vscode-server";
+    ghostty.url = "github:ghostty-org/ghostty";
   };
   outputs =
     inputs@{
       self,
       nixpkgs,
       home-manager,
-      nixvim,
       hyprland,
+      vscode-server,
+      ghostty,
       ...
     }:
 
@@ -40,9 +44,10 @@
         nixos-olan = lib.nixosSystem rec {
           inherit system;
           specialArgs = {
-            inherit hyprland nixvim inputs;
+            inherit hyprland inputs;
           };
           modules = [
+            vscode-server.nixosModules.default
             ./configuration.nix
             hyprland.nixosModules.default
             home-manager.nixosModules.home-manager
@@ -51,6 +56,7 @@
               home-manager.useUserPackages = true;
               home-manager.users.olan = import ./home/home.nix;
               home-manager.extraSpecialArgs = specialArgs;
+              services.vscode-server.enable = true;
             }
           ];
         };

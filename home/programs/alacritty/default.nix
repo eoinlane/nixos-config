@@ -3,8 +3,9 @@
   pkgs,
   lib,
   ...
-}: {
-  home.packages = lib.optionals config.programs.alacritty.enable [pkgs.nerdfonts];
+}:
+{
+  home.packages = lib.optionals config.programs.alacritty.enable [ pkgs.nerd-fonts.jetbrains-mono ];
 
   programs.alacritty = {
     enable = true;

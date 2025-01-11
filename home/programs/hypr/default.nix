@@ -17,7 +17,7 @@
     hypridle
     hyprlock
     swww
-    nwg-dock-hyprland
+    #nwg-dock-hyprland
   ];
 
   #test later systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
@@ -55,7 +55,8 @@
       # Set programs that you use
       $terminal = kitty
       $fileManager = pcmanfm
-      #$menu = wofi --show drun
+      $browser = chromium
+      $menu = wofi --show drun -s ~/wofi1.css
 
 
       #################
@@ -67,6 +68,7 @@
       exec-once = dunst
       # exec-once = nm-applet &
       exec = pkill waybar & sleep 0.5 && waybar && nwg-dock-hyprland
+      #exec = pkill waybar & sleep 0.5 && waybar
       exec-once = swww init & sleep 0.5 && exec wallpaper_random
       exec-once = $terminal & firefox
 
@@ -115,10 +117,10 @@
           active_opacity = 1.0
           inactive_opacity = 1.0
 
-          drop_shadow = true
-          shadow_range = 4
-          shadow_render_power = 3
-          col.shadow = rgba(1a1a1aee)
+          # drop_shadow = true
+          # shadow_range = 4
+          # shadow_render_power = 3
+          # col.shadow = rgba(1a1a1aee)
 
           # https://wiki.hyprland.org/Configuring/Variables/#blur
           blur {
@@ -208,10 +210,11 @@
       # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
       bind = $mainMod, Q, exec, $terminal
       bind = $mainMod, C, killactive,
+      bind = $mainMod, B, exec, chromium,
       bind = $mainMod, M, exit,
       bind = $mainMod, E, exec, $fileManager
       bind = $mainMod, V, togglefloating,
-      bind = $mainMod, R, exec, rofiWindow
+      bind = $mainMod, R, exec, $menu
       bind = $mainMod, P, pseudo, # dwindle
       bind = $mainMod, J, togglesplit, # dwindle
 
