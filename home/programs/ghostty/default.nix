@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.file.".config/ghostyy/config".text = ''
+  home.file.".config/ghostty/config".text = ''
 
     # This is the configuration file for Ghostty.
        #
@@ -37,7 +37,7 @@
        # # Any line beginning with a # is a comment. It's not possible to put
        # # a comment after a config option, since it would be interpreted as a
        # # part of the value. For example, this will have a value of "#123abc":
-       background = #123abc
+       # background = #123abc
        #
        # # Empty values are used to reset config keys to default.
        # key =
@@ -46,5 +46,13 @@
        # # which is explained in the docs for that config option.
        # # Just for example:
        # resize-overlay-duration = 4s 200ms
+
+
+       keybind = shift+ctrl+r=reload_config
+
+       keybind = shift+ctrl+h=new_split:left
+       keybind = shift+ctrl+j=new_split:down
+       keybind = shift+ctrl+k=new_split:up
+       keybind = shift+ctrl+l=new_split:right
   '';
 }
