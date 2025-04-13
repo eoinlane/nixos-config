@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 {
@@ -20,7 +19,8 @@
 
   # Bootloader configuration
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.efi.canTouchEfiVariables = true;
+  #boot.kernelParams = [ "kvm.enable_virt_at_load=0" ];
 
   # Hostname configuration
   networking.hostName = "nixos-olan";
@@ -36,14 +36,36 @@
   programs.nix-ld.enable = true;
 
   services.tailscale.enable = true;
+  #virtualisation.virtualbox.host.enable = true;
+  #users.extraGroups.vboxusers.members = [ "olan" ];
+  # virtualbox exts (for use with usb)
+  # forgive me
+  nixpkgs.config.allowUnfree = true;
+  #virtualisation.virtualbox.host.enableKvm = true;
+  #virtualisation.virtualbox.host.addNetworkInterface = false;
+  #virtualisation.virtualbox.host.enableExtensionPack = true;
+  #virtualisation.virtualbox.guest.enable = true;
+  #virtualisation.virtualbox.guest.dragAndDrop = true;
 
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-    package = pkgs.docker_25;
-  };
+  # Ensure the vboxdrv kernel module is loaded at boot
+  #boot.kernelModules = [ "vboxdrv" "vboxnetadp" "vboxnetflt" "vboxguest"  ];
+  #virtualisation.docker.rootless = {
+  # enable = true;
+  # setSocketVariable = true;
+  # package = pkgs.docker_25;
+  #};
 
-  virtualisation.podman.enable = true;
+  #virtualisation.podman.enable = true;
+  programs.virt-manager.enable = true;
+
+  users.groups.libvirtd.members = [ "olan" ];
+
+  virtualisation.libvirtd.enable = true;
+
+  virtualisation.spiceUSBRedirection.enable = true;
+
+  virtualisation.libvirtd.qemu.swtpm.enable = true;
+
 
   # Allow unfree packages
 
@@ -105,17 +127,18 @@
       "wheel"
       "networkmanager"
       "docker"
+      "vboxusers"
     ]; # Enable sudo for the user.
     packages = with pkgs; [ tree ];
   };
-
-  nixpkgs.config.allowUnfree = true;
 
   nix.settings.allowed-users = [ "*" ];
 
   # System packages
   environment.systemPackages = with pkgs; [
-    docker-compose
+    #virtualbox
+    #docker-compose
+    linuxHeaders
     ntfs3g
     firefox
     git
@@ -161,7 +184,7 @@
     openFirewall = true;
   };
 
-  fileSystems."/mnt/media" = {
+  fileSystems."/home/olan/media" = {
     device = "//raspberrypi/MyMedia";
     fsType = "cifs";
     options = [
