@@ -1,125 +1,65 @@
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 
 {
   imports = [
-    ./hardware-configuration.nix # Include hardware scan results.
+    ./hardware-configuration.nix
     ./hosts
-    # input.home-manager.nixosModules.default
   ];
-  #nixpkgs.overlays = [ (import /etc/nixos/overlays/cava.nix) ];
 
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
+  nix.settings.allowed-users = [ "*" ];
+  nixpkgs.config.allowUnfree = true;
 
-  # Bootloader configuration
   boot.loader.systemd-boot.enable = true;
-  #boot.loader.efi.canTouchEfiVariables = true;
-  #boot.kernelParams = [ "kvm.enable_virt_at_load=0" ];
-
-  # Hostname configuration
   networking.hostName = "nixos-olan";
-
-  # Networking setup
-  networking.networkmanager.enable = true; # Easiest and default for most distros.
-
-  # Time zone configuration
+  networking.networkmanager.enable = true;
   time.timeZone = "Europe/Dublin";
 
-  #  services.xrdp.defaultWindowManager = "gnome-remote-desktop";
-
   programs.nix-ld.enable = true;
-
-  services.tailscale.enable = true;
-  #virtualisation.virtualbox.host.enable = true;
-  #users.extraGroups.vboxusers.members = [ "olan" ];
-  # virtualbox exts (for use with usb)
-  # forgive me
-  nixpkgs.config.allowUnfree = true;
-  #virtualisation.virtualbox.host.enableKvm = true;
-  #virtualisation.virtualbox.host.addNetworkInterface = false;
-  #virtualisation.virtualbox.host.enableExtensionPack = true;
-  #virtualisation.virtualbox.guest.enable = true;
-  #virtualisation.virtualbox.guest.dragAndDrop = true;
-
-  # Ensure the vboxdrv kernel module is loaded at boot
-  #boot.kernelModules = [ "vboxdrv" "vboxnetadp" "vboxnetflt" "vboxguest"  ];
-  #virtualisation.docker.rootless = {
-  # enable = true;
-  # setSocketVariable = true;
-  # package = pkgs.docker_25;
-  #};
-
-  #virtualisation.podman.enable = true;
   programs.virt-manager.enable = true;
 
-  users.groups.libvirtd.members = [ "olan" ];
-
-  virtualisation.libvirtd.enable = true;
-
-  virtualisation.spiceUSBRedirection.enable = true;
-
-  virtualisation.libvirtd.qemu.swtpm.enable = true;
-
-
-  # Allow unfree packages
-
-  # Hardware configuration
-  hardware.graphics = {
+  services.tailscale.enable = true;
+  services.openssh = {
     enable = true;
-    enable32Bit = true;
+    settings.X11Forwarding = true;
   };
-  # NVIDIA driver configuration
-  hardware.nvidia = {
-    modesetting.enable = true;
-    open = true;
-    nvidiaSettings = true;
-    #package = config.boot.kernelPackages.nvidiaPackages.production;
-  };
-
-  hardware.nvidia-container-toolkit.enable = true;
-  # X11 and GNOME configuration
-  services.xserver = {
+  services.avahi = {
     enable = true;
-    videoDrivers = [ "nvidia" ];
-    desktopManager.gnome.enable = true;
-    displayManager.gdm = {
-      enable = true;
-      autoSuspend = false;
-    };
-    xkb.layout = "us";
-    xkb.options = "eurosign:e,caps:escape";
+    nssmdns4 = true;
+    openFirewall = true;
   };
-
-  # Sound configuration
-  services.pulseaudio.enable = false;
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [ hplipWithPlugin ];
+  };
   services.pipewire = {
     enable = true;
     pulse.enable = true;
   };
-  services = {
-    printing = {
+  services.xrdp = {
+    enable = true;
+    openFirewall = true;
+    defaultWindowManager = "gnome-session";
+  };
+
+  virtualisation = {
+    libvirtd = {
       enable = true;
-      drivers = with pkgs; [ hplipWithPlugin ];
+      qemu.swtpm.enable = true;
     };
+    spiceUSBRedirection.enable = true;
   };
 
-  # Environment variables and paths
-  environment.variables = {
-    NIXOS_OZONE_WL = "1";
-    PATH = [
-      "/home/olan/.local/bin"
-      "/home/olan/.config/rofi/scripts"
-    ];
-    NIXPKGS_ALLOW_UNFREE = "1";
-  };
+  users.groups.libvirtd.members = [ "olan" ];
 
-  # User configuration
   users.users.olan = {
     isNormalUser = true;
     home = "/home/olan";
@@ -128,60 +68,74 @@
       "networkmanager"
       "docker"
       "vboxusers"
-    ]; # Enable sudo for the user.
+    ];
     packages = with pkgs; [ tree ];
   };
 
-  nix.settings.allowed-users = [ "*" ];
+  users.users.root.initialHashedPassword = "";
 
-  # System packages
-  environment.systemPackages = with pkgs; [
-    #virtualbox
-    #docker-compose
-    linuxHeaders
-    ntfs3g
-    firefox
-    git
-    tmux
-    eza
-    htop
-    vim # Text editor for configuration edits
-    wget
-    pulseaudio
-    sl
-    bat
-    vscode
-    xclip
-    gnomeExtensions.dash-to-dock
-    gnomeExtensions.gsconnect
-    nixfmt-rfc-style
-    libevdev
-    go
-    gnumake
-    nvidia-container-toolkit
-    podman
-    vlc
-    gnome-remote-desktop
-  ];
-
-  # https://nixos.wiki/wiki/Remote_Desktop
-  services.xrdp = {
-    enable = true;
-    openFirewall = true;
-
-    defaultWindowManager = "gnome-session";
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+    nvidia = {
+      modesetting.enable = true;
+      open = true;
+      nvidiaSettings = true;
+    };
+    nvidia-container-toolkit.enable = true;
   };
-  ##services.gnome-remote-desktop.enable = true; # (would not want to work without this)
-  # Garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
-  services.avahi = {
+
+  services.xserver = {
     enable = true;
-    nssmdns4 = true;
-    openFirewall = true;
+    videoDrivers = [ "nvidia" ];
+    desktopManager.gnome.enable = true;
+    displayManager.gdm = {
+      enable = true;
+      autoSuspend = false;
+    };
+    xkb = {
+      layout = "us";
+      options = "eurosign:e,caps:escape";
+    };
+  };
+
+  environment = {
+    systemPackages = with pkgs; [
+      linuxHeaders
+      ntfs3g
+      firefox
+      git
+      tmux
+      eza
+      htop
+      vim
+      wget
+      pulseaudio
+      sl
+      bat
+      vscode
+      xclip
+      gnomeExtensions.dash-to-dock
+      gnomeExtensions.gsconnect
+      nixfmt-rfc-style
+      libevdev
+      go
+      gnumake
+      nvidia-container-toolkit
+      podman
+      vlc
+      gnome-remote-desktop
+    ];
+    variables = {
+      NIXOS_OZONE_WL = "1";
+      PATH = [
+        "/home/olan/.local/bin"
+        "/home/olan/.config/rofi/scripts"
+      ];
+      NIXPKGS_ALLOW_UNFREE = "1";
+    };
   };
 
   fileSystems."/home/olan/media" = {
@@ -197,11 +151,12 @@
       "noauto"
     ];
   };
-  # Enable OpenSSH
-  services.openssh.enable = true;
-  services.openssh.settings.X11Forwarding = true;
-  # System state version
-  system.stateVersion = "24.05"; # Initial NixOS version installed.
 
-  users.users.root.initialHashedPassword = ""; # Set root password.
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+
+  system.stateVersion = "24.05";
 }
